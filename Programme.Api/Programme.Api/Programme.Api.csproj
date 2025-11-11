@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Title>WCF Allocations API</Title>
+		<Company>Pemberton Capital Advisors LLP</Company>
+		<Description>API for calculating and actioning allocations.</Description>
+		<Copyright>Copyright © 2023 Pemberton Capital Advisors LLP</Copyright>
+		<PackageProjectUrl>https://dev.azure.com/PAMS0/WCF/_git/allocations-api</PackageProjectUrl>
+		<Authors>Pemberton Capital Advisors LLP</Authors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+		<PackageReference Include="Audit.ApiClient" Version="1.0.58" />
+		<PackageReference Include="AutoMapper" Version="12.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="Dapper" Version="2.1.66" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.10" />
+		<PackageReference Include="ParkSquare.ConfigDump.AspNetCore" Version="8.0.3" />
+		<PackageReference Include="Pemberton.KeyVault" Version="1.0.5" />
+		<PackageReference Include="Pemberton.Rates.Api.Client" Version="1.0.81" />
+		<PackageReference Include="Serilog" Version="4.3.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+		<PackageReference Include="Serilog.Expressions" Version="5.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.1-dev-00043" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="4.0.1" />
+		<PackageReference Include="Wcf.Accounts.ApiClient" Version="1.0.439" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Handlers\" />
+	</ItemGroup>
+
+</Project>
