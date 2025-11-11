@@ -1,0 +1,67 @@
+
+trigger:
+  branches:
+    include:
+    - '*'
+  paths:
+    exclude:
+      - '*.yaml'
+
+pool:
+  vmimage: ubuntu-latest
+
+resources:
+  repositories:
+  - repository: pemb-devops-templates
+    type: git
+    name: Pemberton/pemb-devops-templates
+
+variables:
+  - template: vars.yaml@pemb-devops-templates
+  - name: major
+    value: 1
+  - name: minor
+    value: 0
+  - name: runSonar
+    value: true
+  - name: nugetFeedName
+    value: 'Pemberton'
+  - name: projectsToBuild
+    value: '**/*.csproj'
+  - name: projectsToTest
+    value: '**/*.Tests.csproj'
+  - name: projectsToPublish
+    value: |
+     **/Programme.Api.csproj
+
+stages:
+
+- template: build-version.yaml@pemb-devops-templates
+  parameters:
+    major: $(major)
+    minor: $(minor)
+
+- stage: stage_build 
+  displayName: 'Build' 
+  dependsOn: stage_setversion
+  condition: succeeded()
+
+  jobs: 
+
+  - template: dotnet-build-test-analyze.yaml@pemb-devops-templates
+    parameters: 
+      projectsToBuild: ${{ variables.projectsToBuild }}
+      projectsToTest: ${{ variables.projectsToTest }}
+      projectsToPublish: ${{ variables.projectsToPublish }}
+      runSonar: ${{ variables.runSonar }}
+
+- stage: stage_nuget_push 
+  displayName: 'Nuget Packaging' 
+  dependsOn: stage_build
+  condition: and(succeeded(), eq(variables.IsMaster, true))
+
+  jobs: 
+
+  - template: publish-nuget-packages.yaml@pemb-devops-templates
+    parameters: 
+      nugetFeedName: ${{ variables.nugetFeedName }} 

@@ -1,0 +1,79 @@
+
+trigger: none
+pr: none
+
+resources:
+  repositories:
+  - repository: pemb-devops-templates
+    type: git
+    name: Pemberton/pemb-devops-templates
+
+  pipelines:
+  - pipeline: build
+    source: programme-api-build
+    trigger:
+      branches:
+        include:
+        - main
+        - master
+        - develop
+
+variables:
+  - template: vars.yaml@pemb-devops-templates
+  - name: zipFile
+    value: '$(Pipeline.Workspace)/build/Build/zip/Programme.Api.zip'
+
+stages:
+
+- stage: stage_set_version
+  displayName: 'Set Version'
+
+  jobs:
+
+  - template: trigger-version.yaml@pemb-devops-templates
+
+- stage: stage_deploy_dev
+  displayName: 'Deploy DEV'
+  dependsOn: stage_set_version
+  condition: succeeded()
+
+  jobs: 
+
+  - template: webapp-deploy.yaml@pemb-devops-templates
+    parameters: 
+      environmentName: 'Programme API Service - DEV'
+      azureSubscription: 'Chalkline Service Connection - DEV'
+      webAppName: 'app-svc-programme-dev-uksouth'
+      resourceGroup: 'rg_dev_DataHub'
+      zipFile: ${{ variables.zipFile }}
+
+- stage: stage_deploy_pre_prod
+  displayName: 'Deploy PRE-PROD'
+  dependsOn: stage_deploy_dev
+  condition: succeeded()
+
+  jobs: 
+
+  - template: webapp-deploy.yaml@pemb-devops-templates
+    parameters: 
+      environmentName: 'Programme API Service - PRE-PROD'
+      azureSubscription: 'Chalkline Service Connection - PROD'
+      webAppName: 'app-svc-programme-preprd-uksouth'
+      resourceGroup: 'rg_prd_DataHub'
+      zipFile: ${{ variables.zipFile }}
+
+- stage: stage_deploy_prod
+  displayName: 'Deploy PROD'
+  dependsOn: stage_deploy_pre_prod
+  condition: succeeded()
+
+  jobs: 
+
+  - template: webapp-deploy.yaml@pemb-devops-templates
+    parameters: 
+      environmentName: 'Programme API Service - PROD'
+      azureSubscription: 'Chalkline Service Connection - PROD'
+      webAppName: 'app-svc-programme-prd-uksouth'
+      resourceGroup: 'rg_prd_DataHub'
+      zipFile: ${{ variables.zipFile }}
+
